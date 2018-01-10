@@ -1,33 +1,6 @@
 (ns clojure-by-example.ex06-full-functional-firepower)
 
 
-;; WORK IN PROGRESS
-
-
-;; Ex06: Lesson Goals
-;; - This is more of a code-reading section, designed to:
-;;
-;; - Show how to "keep state at the boundary"; e.g.:
-;;   - ingest sophisticated planets from a JSON file
-;;   ----------------Input boundary----------------
-;;   - punch it into a purely functional data processing pipeline
-;;   - do awesome things with just
-;;     - `map`, `filter`, `reduce`,
-;;     - simple helper functions (with/without control flow), and
-;;     - models of the world as pure data structures
-;;   ----------------Output boundary---------------
-;;   - spit out various kinds of outputs into output files
-;;
-;;
-;; - Show where mutability is useful and desirable; e.g. I/O
-;;   (but where it isn't we try hard to avoid it)
-;;
-;; - Also give a feel for how we can use all the lessons learned
-;;   so far, to design flexible function APIs for good "composability".
-
-
-
-
 ;; Previously, in Clojure By Example...
 ;;
 ;; We lamented our immutable fate.
@@ -176,16 +149,13 @@
 
 
 (defn add-sensor-data
-  "Given a sensor key, a planetary hash-map, and a tuple having
-  sensor data for a planet, inject the sensor data under the
-  planet name found in the planetary hash-map."
+  "Given a sensor key to identify a sensor, associate its sensor data
+  into the hash-map of planets. Sensor data hash-map is keyed by
+  planet names, and so is the 'planets' hash-map."
   [sensor-key planets [pname sensor-pdata]]
   (assoc-in planets            ; given these planets as a hash-map
             [pname sensor-key] ; follow this nested path
             sensor-pdata))     ; and assoc this value under that path
-;; Note:
-;; Just like `assoc` (into map) is the partner of `get` (from map),
-;; `assoc-in` (nested map) is the partner of `get-in` (from nested map).
 
 
 (defn add-moon-data
@@ -204,6 +174,12 @@
           atmosphere))
 
 
+(defn keywordize-planet-data
+  [planet-data]
+  (clojure.walk/keywordize-keys
+   planet-data))
+
+
 (defn denormalise-planetary-data
   "Given a hash-map of planetary data (keyed by planet names),
   return just the planetary data, with the planet's names added in.
@@ -211,10 +187,8 @@
   Also ensure all keys are keywordized, for convenient look-ups."
   [planets]
   (map (fn [[pname pdata]]
-         (let [keywordized-pdata (clojure.walk/keywordize-keys
-                                  pdata)]
-           (assoc keywordized-pdata
-                  :name pname)))
+         (assoc (keywordize-planet-data pdata)
+                :name pname))
        planets))
 
 
@@ -276,17 +250,3 @@
    (denormalised-planetary-data
     (gather-all-sensor-data! sensor-data-dir
                              sensor-data-files)))
-;; Note:
-;; - For this to work, colonize-habitable-planets must be complete
-;; - And you should have first evaluated it, to make it unable
-;; - Which means, you have to first correctly solve ex04
-
-
-
-;; RECAP:
-;; - If we carefully keep side-effecting functions at our program
-;;   "boundary", we can design purely functional "core" logic.
-;;   This makes it much easier to reason about most of our program,
-;;   and to test it.
-;;
-;; - TBD...

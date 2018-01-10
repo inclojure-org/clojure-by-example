@@ -1,17 +1,6 @@
 (ns clojure-by-example.ex04-control-flow)
 
 
-;; Ex04: LESSON GOALS
-;;
-;; - Introduce different ways to do data-processing logic in Clojure
-;;   - with branching control structures (if, when, case, cond)
-;;   - without branching structures (we have already sneakily done this)
-;;   - predicates and boolean expressions
-;;
-;; - Have some more fun with much more sophisticated planets,
-;;   using control structures, and the stuff we learned so far
-
-
 ;; The logical base for logic:
 
 ;; Boolean
@@ -50,24 +39,20 @@
      [42 :a "foo" [1 2 3 4]]) ; coerce non-nils to `true`
 
 
-;; However, we normally don't need to coerce booleans, to do branching logic,
-;; as Clojure control structures understand truthy and falsey values too:
 
-;; false is, well, false
+;; Clojure control structures understand truthy and falsey values too:
+
+;; `if` treats `false` and `nil` as falsey, everything else as truthy
 
 (if false   ; if     condition
-  :hello    ; "then" expression
-  :bye-bye) ; "else" expression
+  :hello    ; "then-expression"
+  :bye-bye) ; "else-expression"
 
 
-;; `nil` is falsey
-
-(if nil
-  :hello
-  :bye-bye)
+(if nil :hello :bye-bye)
 
 
-;; true is true, and every non-nil thing is truthy
+;; Truthy:
 
 (if true  :hello :bye-bye)
 
@@ -79,10 +64,7 @@
 
 
 
-;; `when` piggy-backs on the falsy-ness of `nil`
-;; - when a condition is true, it evaluates the body and
-;;   returns its value
-;; - otherwise, it does nothing, and returns `nil`, i.e. _falsey_
+;; `when` is half an `if`, and always returns `nil` for falsey condition
 
 (when 42
   :hello)
@@ -144,32 +126,6 @@
 ;; INTERLUDE...
 ;;
 ;; The logic and ill-logic of `nil` in Clojure
-;;
-;; `nil`
-;;
-;; is Good and Evil,
-;; something and nothing,
-;; dead and alive.
-;;
-;; Love it or hate it,
-;; you _will_ face `nil`.
-;; Sooner than later,
-;; in Clojure.
-;;
-;; Embrace it.
-;; Guard against it.
-;; But don't fear it.
-;;
-;; `nil` isn't the Enemy.
-;; Fear is.
-;;
-;; Wield `nil` as
-;; a double-edged sword.
-;; For it cuts both ways.
-;;
-;; Ignore this,
-;; and you will know
-;; true suffering.
 
 
 ;; Good - `filter` knows `nil` is falsey
@@ -177,15 +133,18 @@
 (filter identity
         [1 2 nil 4 5 nil 7 8])
 
+
 ;; Evil - `even?` cannot handle nothing... so, this fails:
 
 #_(filter even?
         [1 2 nil 4 5 nil 7 8])
 
+
 ;; So... Guard functions like `even?` against the evil of nil
 
 (filter (fn [x] (when x (even? x)))
         [1 2 nil 4 5 nil 7 8])
+
 
 ;; `fnil` is also handy, to "patch" nil input to a function
 
@@ -198,16 +157,9 @@
         [1 2 nil 4 5 nil 7 8])
 
 
-
-;; Lesson:
-;; - Keep `nil` handling in mind, when you write your own functions.
-
-
-;; Demonstration:
-;;
-;; - It's possible to use `nil` for good, and make life easier.
-;;
+;; DEMO
 ;; - How might someone use `nil` to advantage?
+
 
 (def planets [{:name "Venus" :moons 0}
               {:name "Mars" :moons 2}
@@ -275,8 +227,6 @@
 ;; - are also available to do branching logic:
 
 (map (fn [num-moons]
-       ;; Use `cond` when you have to decide what to do based on
-       ;; testing the value of a thing.
        (cond
          (nil? num-moons) "Do nothing!"
          (zero? num-moons)   "Send zero rockets."
@@ -287,8 +237,6 @@
 
 
 (map (fn [num-moons]
-       ;; Use case when you can decide what to do based on the
-       ;; actual value of a thing.
        (case num-moons
          nil "Do nothing!"
          0   "Send zero rockets."
@@ -298,18 +246,8 @@
      [nil 0 1 42])
 
 
-;; EXERCISE:
-;;
-;; Try to reason from first principles:
-;;
-;; Why does cond require `:else` to mark the last / default condition,
-;; but case simply treats the last expression as default?
-;;
-;; (Hint: is `:else` an expression or a value?)
 
-
-;; Clojure hash-sets
-;; - can be used as predicates (and often are used this way)
+;; Clojure hash-sets can be used as predicates!
 
 (= #{:a :b :c}  ; A hash-set of three things, :a, :b, and :c.
    (hash-set :a :b :b :c :a :c :c :c))
@@ -382,6 +320,7 @@
 ;; Define a set of `poison-gases`
 ;; - Let's say :chlorine, :sulphur-dioxide, :carbon-monoxide are poisons
 
+(def poison-gases 'FIX)
 
 ;; Is the gas poisonous?
 #_(poison-gases :oxygen)
@@ -411,6 +350,7 @@
 #_(map :name
      (filter carbon-dioxide? target-planets))
 
+
 ;; EXERCISE:
 ;;
 ;; Having no atmosphere is a bad thing, you know.
@@ -426,6 +366,9 @@
 ;;
 ;; Type your solution below
 
+(defn no-atmosphere?
+  [planet]
+  'FIX)
 
 
 ;; Quick-n-dirty test
@@ -470,12 +413,12 @@
 ;;
 ;; Now, combine these ideas to fix the function below:
 
-
-(defn air-too-poisonous?
-  [planet]
-  (let [atmosphere 'FIX]
-    ;; Repurpose, and fix the logic above to do the needful.
-    'FIX))
+#_(defn air-too-poisonous?
+    [planet]
+    (let [atmosphere 'FIX]
+      (not ('FIX (filter (fn [kv] (when ('FIX (first kv))
+                                    (> 'FIX 1.0)))
+                         atmosphere)))))
 
 
 ;; Quick-n-dirty test
@@ -490,11 +433,8 @@
 
 
 (defn planet-has-some-good-conds?
-  "Given a collection of functions that check a planet for 'good conditions',
-  return true if a given planet satisfies at least one 'good condition'."
+  "Does a given planet satisfy at least one 'good condition'?"
   [good-condition-fns planet]
-  ;;`some` takes a predicate and a collection, and returns true
-  ;; as soon as it finds an item that returns true for the predicate.
   (some (fn [good?] (good? planet))
         good-condition-fns))
 
@@ -515,10 +455,8 @@
           target-planets)
 
 ;; What does `partial` do?
-;; - Retrieve documentation for `partial` using `clojure.repl/doc`.
-;;   (More on "REPL" utilities later.)
 
-(clojure.repl/doc partial) ; evaluate and check the console/repl window
+#_(clojure.repl/doc partial)
 
 ;; Then fix these to make them work:
 
@@ -538,7 +476,9 @@
 
 (defn planet-has-no-bad-conds?
   [bad-condition-fns planet]
-  'FIX)
+  ('FIX (fn [bad?] 'FIX)
+   bad-condition-fns))
+
 
 ;; Quick-n-dirty test:
 #_(filter (partial planet-has-no-bad-conds?
@@ -559,15 +499,21 @@
 ;;
 ;; Define a function that checks true/truthy for this, given
 ;; good-condition-fns, bad-condition-fns, and a planet.
+;;
+;; Re-use:
+;; - `planet-has-some-good-conds?`, and
+;; - `planet-has-no-bad-conds?`
 
 (defn habitable-planet?
-  [] ; <- Fix args
+  [good-condition-fns FIX1 FIX2] ; <- Fix args
   'FIX)
 
 
-;; EXERCISE:
+;; DEMO:
 ;;
-;; And finally, write a function that groups a given collection of
+;; Understand this:
+;;
+;; And finally, we write a function that groups a given collection of
 ;; planets into :habitable, and :inhospitable.
 ;;
 ;; The function must internally know what functions will check for
@@ -576,82 +522,27 @@
 ;; - Assume it's good to be earth, OR to have carbon-dioxide in the air.
 ;; - Assume it's bad to have no atmosphere, or to have poison gases.
 ;;
-;; Hint: here's your chance to make good use of `let`, `partial`,
-;; and `complement`.
 
-(defn group-by-habitable
-  [FIX]
-  'FIX)
+#_(defn group-by-habitable
+    [planet]
+    (let [habitable? (partial habitable-planet?
+                              [earth? carbon-dioxide?]
+                              [air-too-poisonous? no-atmosphere?])]
+      {:habitable (filter habitable?
+                          target-planets)
+       :inhospitable (filter (complement habitable?)
+                             target-planets)}))
 
 
 ;; Quick-n-dirty test:
-(defn colonize-habitable-planets!
-  [planets]
-  (let [send-rockets! (fn [p]
-                        (str "Send rockets to " (:name p) " now!"))]
-    ((comp (partial map send-rockets!)
-           :habitable
-           group-by-habitable)
-     planets)))
+#_(defn colonize-habitable-planets!
+    [planets]
+    (let [send-rockets! (fn [p]
+                          (str "Send rockets to " (:name p) " now!"))]
+      ((comp (partial map send-rockets!)
+             :habitable
+             group-by-habitable)
+       planets)))
 
 
 #_(colonize-habitable-planets! target-planets)
-
-
-
-;; RECAP:
-;;
-;; Phew! That was a _lot_ of computing.
-;;
-;; But we did it, with a rather small set of core things and core ideas:
-;;
-;; Core Clojure things:
-;;
-;; - named functions
-;; - anonymous functions
-;; - `let`-bound locals
-;; - Sequences:
-;;   - hash-maps (plus keywords + keyword access)
-;;   - vectors   (plus first and second to get the 1st and 2nd item)
-;;   - hash-sets (plus their great utility as predicates)
-;; - Sequence functions:
-;;   - map
-;;   - filter
-;;   - reduce
-;;   - some
-;;   - empty?
-;; - Branching and boolean logic:
-;;   - true/false and truthy/falsey
-;;   - nil handling
-;;   - if
-;;   - when
-;;   - case
-;;   - cond
-;;   - not
-;; - "Higher Order" Functions, for convenience:
-;;   (HOFs are functions that take functions as arguments
-;;    and/or return functions.)
-;;   - comp
-;;   - complement
-;;   - partial
-;;   - fnil
-;;
-;; Core Clojure ideas:
-;;
-;; - Functions are values. That's why we can:
-;;   - pass them as arguments,
-;;    - return them as results of functions, and
-;;    - even make collections of them (like our "good conditions" and
-;;      "bad conditions".)
-;;
-;; - Good functions "compose":
-;;   We write many small functions that each do one simple task well.
-;;   And then, we combine and mix-and-match those functions to do
-;;   increasingly sophisticated tasks.
-;;
-;; - We tend to think in terms of sequences, and sequence operations.
-;;   (As opposed to looping operations on items of sequences.)
-;;
-;; - We strongly prefer to model real-world objects as pure data,
-;;   then and use many small functions to progressively transform our
-;;   data models into real-world outcomes.

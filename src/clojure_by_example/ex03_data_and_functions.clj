@@ -1,12 +1,6 @@
 (ns clojure-by-example.ex03-data-and-functions)
 
-
-;; Ex03: LESSON GOALS (build upon ex01, and ex02)
-;;
-;; - Learn a few more nifty functions on collections (cousins of `map`)
-;; - Learn to combine simple functions into more powerful functions
-;; - Get a sense of how to model with data, and compute with functions
-;; - Get a feel for some of the flexibility of Clojure data structures
+;; Let's start building more sophisticated things...
 
 
 ;; Let's begin again, with our planets, our moons checker, and `map`
@@ -28,7 +22,7 @@
 
 ;; The following results make some sense:
 
-(map :name planets) ; ok, we can now print just the names of planets
+(map :name planets) ; ok, we can now extract just the names of planets
 
 (map :moons planets) ; ok, we can now count total number of moons
 
@@ -38,21 +32,15 @@
 (map planet-has-moons? planets)
 
 
-;; More usefully, I would like to know _which_ planets have moons.
-;;
-;; Even more usefully, given a collection of planets, I want to
-;; filter all planets with moons.
-
+;; `filter` out things:
 
 ;; EXERCISE:
 ;;
-;; Predict the result of this expression:
+;; Predict the result of these expressions:
 
 (filter planet-has-moons?
         planets)
 
-
-;; Can we do the opposite?
 
 (filter (fn [p] (not (planet-has-moons? p)))
         planets)
@@ -73,23 +61,13 @@
 ;;
 ;; Now, filter out planets without moons...
 
-;; (FIX FIX FIX) ; fixme and evaluate
+#_(FIX FIX FIX)
 
 
 
-;; Can we write a function to filter planets into two groups?
+;; Now, can we write a function to filter planets into two groups?
 ;; - planets with moons, and
 ;; - planets without moons?
-;;
-;; We will probably need to look up the groups separately later.
-;;
-;; So?
-;;
-;; We should model this as a hash-map. Something nice, like this...
-;;
-;; {:planets-with-moons    [planet-X-hash-map p-Y-hash-map ...]
-;;  :planets-without-moons [planet-A-hash-map p-B-hash-map ...]}
-
 
 ;; EXERCISE:
 ;;
@@ -97,22 +75,6 @@
 
 {:planets-with-moons    (filter planet-has-moons? planets)
  :planets-without-moons (filter planet-without-moon? planets)}
-
-
-;; Note: Do More With Less
-;;
-;; - Clojure lets us simply write down the structure of hash-maps,
-;;   even if some values need to be computed.
-;;
-;; - If an "un-evaluated expression" like (filter ...) exists, and if we
-;;   evaluate the hash-map, Clojure will put the return value of the
-;;   un-evaluated expression in the hash-map, where the expression was.
-;;
-;; By the way it's not just hash-maps, this works too, for
-;; the same reason:
-
-[(filter planet-has-moons? planets)
- (filter planet-without-moon? planets)]
 
 
 ;; EXERCISE:
@@ -132,13 +94,7 @@
 
 
 
-;; If you did it right, this is what happened:
-;;
-;; - When we called the function with `planets`, it did this:
-;;   - evaluated each filter one by one
-;;   - put the results in the respective places in the hash-map
-;;   - returned the whole hash-map
-
+;; Try to When we called the function with `planets`?
 
 
 ;; Now we can further find...
@@ -154,10 +110,6 @@
 #_('FIX 'FIX 'FIX)
 
 
-;; So far, we did some pretty cool things with sequence operations like
-;; `map` and `filter`. Now for the big boss of sequence operations...
-
-
 
 ;; REDUCE!
 
@@ -167,15 +119,9 @@
 
 
 ;; Now, how to "reduce" the collection into one number?
-;; i.e., how to count the sum total of moons of all given planets?
-
-;; Well...
 
 (reduce + 0 (map :moons planets))
 ;; It computes this: 0 + p1-moons + p2-moons + .... + pN-moons
-
-;; `reduce` takes a function, an "accumulator" value, and an input
-;; collection, and returns an "accumulated" value.
 
 ;; Imagine each step of the above computation, like this:
 
@@ -190,17 +136,6 @@
 ;; ---------------------------------------
 ;; 3 (return value)          ; reduce spits out the accumulator
 
-;; In words...
-;;
-;; - To begin with, `reduce` passes the accumulator and the first item
-;;   from the input collection to the function.
-;;
-;; - `reduce` "manages" the accumulator for us, such that the function
-;;   can update the accumulator, and `reduce` will feed the updated
-;;   accumulator back into the function, along with the next item
-;;   in the input collection.
-;;
-;; - This continues until the input collection is exhausted.
 
 ;; `reductions` is a convenience function that helps us visualize
 ;; the "accumulator" at each step of the `reduce` computation:
@@ -261,6 +196,9 @@
 ;; - returns true if the planet's mass exceeds Earth's mass
 ;; - returns false otherwise
 
+(defn massier-than-earth?
+  [FIX]
+  FIX)
 
 
 ;; EXERCISE:
@@ -290,23 +228,16 @@
        'FIX2    'FIX}))
 
 
+;; Now, calculate `planetary-stats` for:
+;; - planets having moons:
 
-;; EXERCISE:
-;;
-;; Calculate `planetary-stats` for:
-;;
-;; - planets with moons:
+#_('FIX 'FIX planets)
 
 
-;; EXERCISE:
-;;
-;; Calculate `planetary-stats` for:
-;;
-;; - planets without moons:
+;; - and, for planets without moons:
 
 
-
-;; - planets without moons, using `complement`:
+;; - and again, for planets without moons, using `complement`:
 ;;   compare, understand, use:
 
 (planet-has-moons?              {:name "Earth" :moons 1})
@@ -315,6 +246,9 @@
 
 ;; Type your solution here:
 
+#_(planetary-stats
+   'FIX
+   planets)
 
 
 
@@ -322,11 +256,11 @@
 ;;
 ;; Calculate `planetary-stats' for:
 ;;
-;; - planets massier than the earth:
+;; - planets "massier" than the earth:
 
 
 
-;; - planets less massier than the earth, using `comp`:
+;; - and for planets less "massy" than the earth, using `comp`:
 ;;   compare, understand, use:
 #_(massier-than-earth?            {:name "Jupiter" :mass 317.8})
 
@@ -351,23 +285,20 @@
 ;; - Returns an easy-to-query data structure containing
 ;;   the following stats:
 ;;
-;; given planets
+;; given planets: count, names, total mass
+;; planets with moons: count, names, total mass
 ;;     count
 ;;     names
 ;;     total mass
-;; planets with moons
+;; planets without moons: count, names, total mass
 ;;     count
 ;;     names
 ;;     total mass
-;; planets without moons
+;; planets with more mass than earth: count, names, total mass
 ;;     count
 ;;     names
 ;;     total mass
-;; planets with more mass than earth
-;;     count
-;;     names
-;;     total mass
-;; planets having less mass than earth
+;; planets having less mass than earth: count, names, total mass
 ;;     count
 ;;     names
 ;;     total mass
@@ -375,7 +306,13 @@
 
 ;; Write the `more-planetary-stats` function below:
 
-
+(defn more-planetary-stats
+  [FIX]
+  {:given-planets FIX
+   :with-moons FIX
+   :without-moons FIX
+   :massier-than-earth FIX
+   :less-massy-than-earth FIX})
 
 
 ;; Check your results. Uncomment and evaluate:
@@ -385,24 +322,3 @@
   (more-planetary-stats (take 2 planets))
 
   (more-planetary-stats (drop 2 planets)))
-
-
-
-;; RECAP:
-;;
-;; - `map`, `filter`, and `reduce` are powerful sequence-processing
-;;   functions. Clojure programmers use these heavily.
-;;
-;; - Clojure programmers define small functions that do one task well,
-;;   and then build up sophisticated solutions by combining many such
-;;   small functions.
-;;
-;; - We can directly write down the actual structure of a data structure,
-;;   and Clojure will evaluate any un-evaluated values at run-time,
-;;   and return us the same data structure, but with computed values.
-;;
-;; - Clojure data structures are very flexible, and allow us to
-;;   model almost any real-world object. Previously we put hash-maps
-;;   inside a sequence to represent a collection of planets. And, in
-;;   this exercise, we put sequences inside a hash-map to group
-;;   planets by moons.

@@ -1,16 +1,5 @@
 (ns clojure-by-example.ex02-small-functions)
 
-;; Ex02: LESSON GOALS
-;;
-;; - Learn to define simple functions, and use them
-;; - Learn a little bit about how functions behave
-;; - Learn about a few useful built-in Clojure functions
-;;   (We will use these in later exercises.)
-;; - Stitch up ideas in this section with a small insight
-;;   into how we can use functions on vectors and hash-maps.
-;;   (Set up your intuition, for later exercises.)
-
-
 ;; First, some simple functions:
 
 
@@ -22,15 +11,11 @@
 ;;   (body of the function))
 
 
-;; `defn` stands for:
-;; - "DEfine a FuNction,
-;; - _and_ give it a globally-referenced name"
-
-
 (defn same
   "Simply return the input unchanged."
   [x]
   x)
+
 
 ;; EXERCISE
 ;;
@@ -69,24 +54,11 @@
 ((fn [x] x) [1 2 3 4 5])
 
 
-;; We will make good use of such "anonymous" functions soon.
-;; Just understand they are just like 'regular' functions, except
-;; they do not have a globally-referenced name (hence "anonymous").
-
-
-;; Reminder: Do More With Less!
-;; - Observe that `same` as well as `(fn [x] x)` appear to be capable
-;;   of accepting _any_ kind of value and returning it.
-;; - This function definition is very general-purpose indeed.
-;; - We will frequently use this "general-purpose" idea.
-
 
 ;; Some "built-in" functions
 
-;; Clojure has a function called `fn?`, that returns true if we
-;; pass it something that is a function, and false otherwise.
+;; - `fn?` is a function that returns true if we pass it a function
 
-;; None of these are functions. So, return `false`.
 
 (fn? 42)
 
@@ -105,15 +77,7 @@
 (fn? fn?)
 
 
-;; Wait a minute...!!!
-;;
-;; We just passed functions as arguments to `fn?`, and it worked!
-;;
-;; Is `fn?` special, or can we pass any function to any function?
-
-;; Well we know `fn?` is a function...
-;; - Suppose we pass `fn?` to `same`, do we get back `fn?` unchanged?
-
+;; Suppose we pass `fn?` to `same`?
 (= fn?
    (same fn?))
 
@@ -128,21 +92,6 @@
 (= 'FIX
    (same same))
 
-
-;; Lesson: Functions also behave like "values":
-;;
-;; - `42` is a value. `"moons"` is a value. `:moons` is a value.
-;;   - Values represent themselves directly
-;;   - Values are unique in the whole universe (42 is NOT "forty two")
-;;   - Values never change. They are constant forever and ever.
-;;
-;; - All Clojure function also are "values", including user-defined
-;;   functions (like `same`). And, just like the other values...
-;;   - We can pass functions as arguments to other functions,
-;;     without any special syntax or declarations.
-;;   - Functions can _return_ functions as results.
-;;   - We can compare any two functions and tell if they are
-;;     exactly the same thing.
 
 
 ;; Some other "built-in" Clojure functions
@@ -162,44 +111,35 @@
    (same :moon))
 
 
-;; `map` a function over a collection...
+
+;; `map`
+;; - a function over a collection...
+
 (map inc [1 2 3 4 5 6])
 
 ;; Such that...
-(comment ( 1 2 3 4 5 6))  ; each item of input
-;;         | | | | | |   ; is incremented by `inc` to give a result where
-(comment ( 2 3 4 5 6 7))  ; each output item "maps" back to an input item
-
-;; In general, we can use `map` to express one-to-one "mappings"
-;; of input and output, by way of a function.
-
+'( 1 2 3 4 5 6)  ; each item of input
+;; | | | | | |   ; is incremented by `inc` to give a result where
+'( 2 3 4 5 6 7)  ; each output item "maps" back to an input item
 
 
 ;; EXERCISE:
 ;;
 ;; What should this return?
-;; First predict the answer, then evaluate to confirm.
 (map even? [1 2 3 4 5 6])
-;; Hint: mentally apply the `even?` function to each item, one by one,
-;; and build up a collection of results of each function application.
+
 
 
 ;; How about this?
-
 (map odd? [1 2 3 4 5 6])
 
 
 ;; And this?
-
 (map identity [1 2 3 4 5 6]) ; Recall: `identity` is just like `same`
 
 
 ;; And this?
-
 (map (fn [x] x) [1 2 3 4 5 6])
-
-;; Our anonymous "identity" function is a drop-in replacement
-;; for `identity`, as well as `same`.
 
 
 
@@ -216,7 +156,7 @@
 [{:name "Mercury" :moons 0}
  {:name "Venus"   :moons 0}
  {:name "Earth"   :moons 1}
- {:name "Mars"    :moons 2}] ; (Yes we can do this. More on this later!)
+ {:name "Mars"    :moons 2}]
 
 
 ;; Let's name our collection of planets as, um... `planets`
@@ -227,7 +167,7 @@
               {:name "Mars"    :moons 2}])
 
 
-;; Recall that we can query a map, like this:
+;; Recall that we can query a hash-map, like this:
 
 (:name {:name "Mercury" :moons 0})
 
@@ -238,12 +178,8 @@
 ;;
 ;; What if we pass a keyword instead of a real function, to `map`?
 ;; - What should the following map expression return?
-;; - Predict the answer, and then evaluate to confirm.
 
 (map :name planets)
-
-;; (map :name over `planets`, which is vector of planet hash-maps)
-
 
 
 ;; Stitching it all together...
@@ -267,12 +203,10 @@
 
 ;; EXERCISE
 ;;
-;; Instead of querying each map, why not query all of them at one go?
+;; Instead of querying each hash-map for moons, why not
+;; query all of them at one go?
 
 #_(map 'FIX 'FIX)
-
-
-;; Also, as we now know, we can use anonymous functions creatively...
 
 
 ;; EXERCISE
@@ -292,24 +226,3 @@
      ('FIX 'FIX 'FIX)  ; use anonymous function
 
      [false false true true])
-
-
-
-;; RECAP:
-;; - Functions are easy to define
-;; - Functions can _accept_ functions as arguments
-;; - Functions can _return_ functions as arguments
-;; - Clojure has nifty "built-in" functions
-;;   - e.g. the function `map` lets us express a mapping of an
-;;     input collection to an output collection, by way of a function.
-
-
-;; DO MORE WITH LESS:
-;; - Even the most simple functions can be general-purpose
-;; - Clojure keywords behave like functions of hash-maps
-;; - Since keywords can query hash-maps, we can completely avoid writing
-;;   custom "getter" functions to query values in our hash-maps.
-;; - We can put hash-maps in vectors, to make vectors of hash-maps.
-;; - Since `map` accepts keywords in place of functions, we can
-;;   combine the above tiny set of ideas, to query many planetary hash-
-;;   maps at one go.
