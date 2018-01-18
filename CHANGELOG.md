@@ -1,24 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [Unreleased]
+## [Unreleased] - 2018-01-12
 ### Changed
-- Add a new arity to `make-widget-async` to provide a different widget shape.
+- The initial cut of this project, for use in the guided Clojure
+  workshop at IN/Clojure 2018, Bangalore (http://inclojure.org/).
 
-## [0.1.1] - 2017-12-04
-### Changed
-- Documentation on how to make the widgets.
+## [Unreleased] - 2018-01-18
+- Licensed under MIT, and assigned copyright to IN/Clojure for
+  responsible stewardship, and in preparation for wider usage.
 
 ### Removed
-- `make-widget-sync` - we're all async, all the time.
+- A couple of NASA fact sheets that were committed while we were
+  toying around with things. Removed due to unknown copyright status.
 
 ### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
+- Fixed documentation, examples etc. based on workshop experience.
 
-## 0.1.0 - 2017-12-04
-### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
+[Unreleased]: https://github.com/inclojure-org/clojure-by-example/commit/b27d7f82570a51121ee39fda5db004e3b057292f
 
-[Unreleased]: https://github.com/your-name/clojure_by_example/compare/0.1.1...HEAD
-[0.1.1]: https://github.com/your-name/clojure_by_example/compare/0.1.0...0.1.1

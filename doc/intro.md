@@ -1,3 +1,3 @@
-# Introduction to clojure_by_example
+# Introduction to Clojure By Example
 
-TODO: write [great documentation](http://jacobian.org/writing/what-to-write/)
+All that needed to be said has been said in the README.md file.
