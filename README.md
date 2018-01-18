@@ -114,9 +114,8 @@ Live long, and prosper.
   - All the workshop participants, and the many Clojurists who generously donated their time to make it successful.
   - [inclojure-org](https://github.com/inclojure-org) for being the umbrella under which this work happened.
 
-## License
+## Copyright and License
 
-Copyright © 2017 FIXME
+Copyright © 2017-2018 [IN/Clojure](http://inclojure.org/). 
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the [MIT license](https://github.com/inclojure-org/clojure-by-example/blob/master/LICENSE).
