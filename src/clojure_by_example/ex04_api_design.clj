@@ -109,7 +109,7 @@
   #_(= (upper-bound    :co2)
        (upper-bound-v2 :co2)
        (upper-bound-v2 :co2 tolerances)
-       (upper-bound-v2 :co2 {:co2 {:low 0.1}}))
+       (upper-bound-v2 :co2 {:co2 {:high 5.0}}))
   )
 
 
